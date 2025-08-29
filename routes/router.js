@@ -11,15 +11,16 @@ router.post("/register", async (req, res) => {
     }
 
     try {
-        const preuser = await users.findOne({ email: email });
+        const preuser = await users.findOne({ email });
 
         if (preuser) {
             return res.status(400).json({ error: "User already exists" });
-        } else {
-            const adduser = new users({ username, password, email, age, mobile, post, address });
-            await adduser.save();
-            return res.status(201).json(adduser);
         }
+
+        const adduser = new users({ username, password, email, age, mobile, post, address });
+        await adduser.save();
+
+        return res.status(201).json(adduser);
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -29,9 +30,9 @@ router.post("/register", async (req, res) => {
 router.get("/users", async (req, res) => {
     try {
         const allUsers = await users.find();
-        res.status(200).json(allUsers);
+        return res.status(200).json(allUsers);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 
@@ -40,10 +41,14 @@ router.get("/users/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const user = await users.findById(id);
-        if (!user) return res.status(404).json({ error: "User not found" });
-        res.status(200).json(user);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        return res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 
@@ -55,10 +60,14 @@ router.put("/users/:id", async (req, res) => {
             new: true, // return updated document
             runValidators: true
         });
-        if (!updatedUser) return res.status(404).json({ error: "User not found" });
-        res.status(200).json(updatedUser);
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        return res.status(200).json(updatedUser);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 
@@ -67,10 +76,14 @@ router.delete("/users/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const deletedUser = await users.findByIdAndDelete(id);
-        if (!deletedUser) return res.status(404).json({ error: "User not found" });
-        res.status(200).json({ message: "User deleted successfully" });
+
+        if (!deletedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        return res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 
