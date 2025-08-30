@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-app.use(router);
+app.use("/api", router);
 
 app.get('/', (req, res) => {
     res.send("Successful Deploy");
